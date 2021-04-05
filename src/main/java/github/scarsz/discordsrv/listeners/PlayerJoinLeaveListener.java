@@ -28,6 +28,7 @@ import github.scarsz.discordsrv.objects.managers.GroupSynchronizationManager;
 import github.scarsz.discordsrv.util.DiscordUtil;
 import github.scarsz.discordsrv.util.GamePermissionUtil;
 import github.scarsz.discordsrv.util.LangUtil;
+import github.scarsz.discordsrv.util.NameUtil;
 import github.scarsz.discordsrv.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -47,6 +48,8 @@ public class PlayerJoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+
+        NameUtil.fetch(player.getUniqueId(), player.getName());
 
         // if player is OP & update is available tell them
         if (GamePermissionUtil.hasPermission(player, "discordsrv.updatenotification") && DiscordSRV.updateIsAvailable) {

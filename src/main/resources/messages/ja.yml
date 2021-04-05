@@ -20,7 +20,8 @@
 #                    例: Notch
 # %channelname%:    メッセージが来るチャンネルの名前
 #                    例: server-chat
-#
+# %mcid%            マインクラフト内での名前
+#                    例: SaikyouPeyangsan
 # DiscordToMinecraftAllRolesSeparator: %allroles% で利用されるセパレータ
 #
 DiscordToMinecraftChatMessageFormat: "[&bDiscord &r| %toprolecolor%%toprole%&r] %name% » %message%"

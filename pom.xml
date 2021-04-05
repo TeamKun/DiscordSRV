@@ -672,6 +672,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- SQL -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+
         <!-- json.simple (required by bStats) -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>

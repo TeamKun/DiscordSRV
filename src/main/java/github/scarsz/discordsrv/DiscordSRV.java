@@ -29,6 +29,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.neovisionaries.ws.client.DualStackMode;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import dev.vankka.mcdiscordreserializer.discord.DiscordSerializer;
 import github.scarsz.configuralize.DynamicConfig;
 import github.scarsz.configuralize.Language;
@@ -155,6 +157,7 @@ public class DiscordSRV extends JavaPlugin {
     @Getter private AccountLinkManager accountLinkManager;
     @Getter private CommandManager commandManager = new CommandManager();
     @Getter private GroupSynchronizationManager groupSynchronizationManager = new GroupSynchronizationManager();
+    @Getter public static HikariDataSource sql;
 
     // Threads
     @Getter private ChannelTopicUpdater channelTopicUpdater;
@@ -418,6 +421,7 @@ public class DiscordSRV extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
@@ -1208,6 +1212,12 @@ public class DiscordSRV extends JavaPlugin {
             isReady = true;
             api.callEvent(new DiscordReadyEvent());
         }
+
+        HikariConfig conf = new HikariConfig();
+        conf.setDriverClassName("org.sqlite.JDBC");
+        conf.setJdbcUrl("jdbc:" + new File(getDataFolder(), "mcid.db").getAbsolutePath());
+        sql = new HikariDataSource(conf);
+
     }
 
     @Override

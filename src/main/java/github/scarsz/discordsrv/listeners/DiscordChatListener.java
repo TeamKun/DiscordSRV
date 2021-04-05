@@ -243,8 +243,10 @@ public class DiscordChatListener extends ListenerAdapter {
         }
     }
 
+    //TODO: ここ
     private String replacePlaceholders(String input, GuildMessageReceivedEvent event, List<Role> selectedRoles, String message) {
         return input.replace("%channelname%", event.getChannel().getName())
+                .replace("%mcid%", NameUtil.getName(DiscordSRV.getPlugin().getAccountLinkManager().getUuid(event.getAuthor().getId())))
                 .replace("%name%", DiscordUtil.strip(event.getMember().getEffectiveName()))
                 .replace("%username%", DiscordUtil.strip(event.getMember().getUser().getName()))
                 .replace("%toprole%", DiscordUtil.getRoleName(!selectedRoles.isEmpty() ? selectedRoles.get(0) : null))
