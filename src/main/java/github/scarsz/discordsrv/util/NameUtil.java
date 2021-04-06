@@ -50,7 +50,7 @@ public class NameUtil
             stmt.execute("CREATE TABLE IF NOT EXISTS PLAYER(" +
                     "UUID text," +
                     "NAME text," +
-                    "UPDATE integer" +
+                    "UPDATED_AT integer" +
                     ")");
         }
         catch (Exception e)
@@ -64,7 +64,7 @@ public class NameUtil
         try (Connection con = DiscordSRV.getSql().getConnection();
              PreparedStatement stmt = con.prepareStatement("INSERT INTO PLAYER VALUES(?, ?, ? )" +
                      " ON CONFLICT DO " +
-                     "UPDATE SET NAME=?, UPDATE=?"))
+                     "UPDATE SET NAME=?, UPDATED_AT=?"))
         {
             stmt.setString(1, id.toString());
             stmt.setString(2, name);
@@ -136,7 +136,7 @@ public class NameUtil
             if (set.next())
             {
                 name = set.getString("NAME");
-                updated = set.getInt("UPDATE");
+                updated = set.getInt("UPDATED_AT");
 
             }
             else

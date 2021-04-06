@@ -422,6 +422,8 @@ public class DiscordSRV extends JavaPlugin {
             e.printStackTrace();
         }
 
+        NameUtil.init();
+
     }
 
     @Override
