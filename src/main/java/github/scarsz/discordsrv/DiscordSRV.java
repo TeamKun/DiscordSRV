@@ -1215,7 +1215,7 @@ public class DiscordSRV extends JavaPlugin {
 
         HikariConfig conf = new HikariConfig();
         conf.setDriverClassName("org.sqlite.JDBC");
-        conf.setJdbcUrl("jdbc:" + new File(getDataFolder(), "mcid.db").getAbsolutePath());
+        conf.setJdbcUrl("jdbc:sqlite:" + new File(getDataFolder(), "mcid.db").getAbsolutePath());
         sql = new HikariDataSource(conf);
 
     }
