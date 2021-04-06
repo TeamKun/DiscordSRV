@@ -44,11 +44,11 @@ public class NameUtil
 {
     public static void init()
     {
-        try (Connection con =  DiscordSRV.getSql().getConnection();
+        try (Connection con =  DiscordSRV.sql.getConnection();
             Statement stmt = con.createStatement();)
         {
             stmt.execute("CREATE TABLE IF NOT EXISTS PLAYER(" +
-                    "UUID text," +
+                    "UUID text PRIMARY KEY," +
                     "NAME text," +
                     "UPDATED_AT integer" +
                     ")");
@@ -61,16 +61,12 @@ public class NameUtil
 
     private static void insert(UUID id, String name)
     {
-        try (Connection con = DiscordSRV.getSql().getConnection();
-             PreparedStatement stmt = con.prepareStatement("INSERT INTO PLAYER VALUES(?, ?, ? )" +
-                     " ON CONFLICT DO " +
-                     "UPDATE SET NAME=?, UPDATED_AT=?"))
+        try (Connection con = DiscordSRV.sql.getConnection();
+             PreparedStatement stmt = con.prepareStatement("INSERT OR REPLACE INTO PLAYER VALUES(?, ?, ? )"))
         {
             stmt.setString(1, id.toString());
             stmt.setString(2, name);
             stmt.setLong(3, new Date().getTime());
-            stmt.setString(4, name);
-            stmt.setLong(5, new Date().getTime());
             stmt.execute();
         }
         catch (Exception e)
@@ -127,7 +123,7 @@ public class NameUtil
         if (id == null)
             return "";
 
-        try(Connection con = DiscordSRV.getSql().getConnection();
+        try(Connection con = DiscordSRV.sql.getConnection();
             PreparedStatement stmt = con.prepareStatement("SELECT * FROM PLAYER WHERE UUID=?"))
         {
             stmt.setString(1, id.toString());

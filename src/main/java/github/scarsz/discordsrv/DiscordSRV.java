@@ -157,7 +157,7 @@ public class DiscordSRV extends JavaPlugin {
     @Getter private AccountLinkManager accountLinkManager;
     @Getter private CommandManager commandManager = new CommandManager();
     @Getter private GroupSynchronizationManager groupSynchronizationManager = new GroupSynchronizationManager();
-    @Getter public static HikariDataSource sql;
+    public static HikariDataSource sql;
 
     // Threads
     @Getter private ChannelTopicUpdater channelTopicUpdater;
@@ -422,8 +422,6 @@ public class DiscordSRV extends JavaPlugin {
             e.printStackTrace();
         }
 
-        NameUtil.init();
-
     }
 
     @Override
@@ -448,6 +446,11 @@ public class DiscordSRV extends JavaPlugin {
             getLogger().severe("DiscordSRV failed to load properly: " + e.getMessage() + ". See " + github.scarsz.discordsrv.util.DebugUtil.run("DiscordSRV") + " for more information. Can't figure it out? Go to https://discordsrv.com/discord for help");
         });
         initThread.start();
+        HikariConfig conf = new HikariConfig();
+        conf.setDriverClassName("org.sqlite.JDBC");
+        conf.setJdbcUrl("jdbc:sqlite:" + new File(getDataFolder(), "mcid.db").getAbsolutePath());
+        sql = new HikariDataSource(conf);
+        NameUtil.init();
     }
 
     public void disablePlugin() {
@@ -567,6 +570,7 @@ public class DiscordSRV extends JavaPlugin {
                 });
             } catch (Throwable ignored) {}
         }
+
     }
 
     public void init() {
@@ -1215,10 +1219,7 @@ public class DiscordSRV extends JavaPlugin {
             api.callEvent(new DiscordReadyEvent());
         }
 
-        HikariConfig conf = new HikariConfig();
-        conf.setDriverClassName("org.sqlite.JDBC");
-        conf.setJdbcUrl("jdbc:sqlite:" + new File(getDataFolder(), "mcid.db").getAbsolutePath());
-        sql = new HikariDataSource(conf);
+
 
     }
 

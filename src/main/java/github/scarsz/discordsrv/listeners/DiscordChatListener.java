@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +54,23 @@ import java.util.regex.Pattern;
 
 public class DiscordChatListener extends ListenerAdapter {
 
+
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+
+                use(event);
+            }
+        }.runTaskAsynchronously(DiscordSRV.getPlugin());
+    }
+
+    public void use(GuildMessageReceivedEvent event)
+    {
+
         // if message is from null author or self do not process
         if (event.getMember() == null || DiscordUtil.getJda() == null || event.getAuthor().equals(DiscordUtil.getJda().getSelfUser()))
             return;
@@ -203,33 +219,33 @@ public class DiscordChatListener extends ListenerAdapter {
                 .filter(pluginHook -> pluginHook instanceof DynmapHook)
                 .map(pluginHook -> (DynmapHook) pluginHook)
                 .findAny().ifPresent(dynmapHook -> {
-                    String chatFormat = replacePlaceholders(LangUtil.Message.DYNMAP_CHAT_FORMAT.toString(), event, selectedRoles, finalMessage);
-                    String nameFormat = replacePlaceholders(LangUtil.Message.DYNMAP_NAME_FORMAT.toString(), event, selectedRoles, finalMessage);
+            String chatFormat = replacePlaceholders(LangUtil.Message.DYNMAP_CHAT_FORMAT.toString(), event, selectedRoles, finalMessage);
+            String nameFormat = replacePlaceholders(LangUtil.Message.DYNMAP_NAME_FORMAT.toString(), event, selectedRoles, finalMessage);
 
-                    chatFormat = ChatColor.translateAlternateColorCodes('&', chatFormat);
-                    nameFormat = ChatColor.translateAlternateColorCodes('&', nameFormat);
+            chatFormat = ChatColor.translateAlternateColorCodes('&', chatFormat);
+            nameFormat = ChatColor.translateAlternateColorCodes('&', nameFormat);
 
-                    if (!DiscordSRV.config().getBoolean("ParseEmojisToNames")) {
-                        chatFormat = EmojiParser.removeAllEmojis(chatFormat);
-                        nameFormat = EmojiParser.removeAllEmojis(nameFormat);
-                    }
+            if (!DiscordSRV.config().getBoolean("ParseEmojisToNames")) {
+                chatFormat = EmojiParser.removeAllEmojis(chatFormat);
+                nameFormat = EmojiParser.removeAllEmojis(nameFormat);
+            }
 
-                    if (DiscordSRV.config().getBoolean("Experiment_MCDiscordReserializer_ToMinecraft")) {
-                        chatFormat = DiscordUtil.convertMentionsToNames(chatFormat);
-                        nameFormat = DiscordUtil.convertMentionsToNames(nameFormat);
-                    }
+            if (DiscordSRV.config().getBoolean("Experiment_MCDiscordReserializer_ToMinecraft")) {
+                chatFormat = DiscordUtil.convertMentionsToNames(chatFormat);
+                nameFormat = DiscordUtil.convertMentionsToNames(nameFormat);
+            }
 
-                    chatFormat = PlaceholderUtil.replacePlaceholders(chatFormat);
-                    nameFormat = PlaceholderUtil.replacePlaceholders(nameFormat);
+            chatFormat = PlaceholderUtil.replacePlaceholders(chatFormat);
+            nameFormat = PlaceholderUtil.replacePlaceholders(nameFormat);
 
-                    // apply regex filters
-                    for (Map.Entry<Pattern, String> entry : DiscordSRV.getPlugin().getDiscordRegexes().entrySet()) {
-                        chatFormat = entry.getKey().matcher(chatFormat).replaceAll(entry.getValue());
-                        nameFormat = entry.getKey().matcher(nameFormat).replaceAll(entry.getValue());
-                    }
+            // apply regex filters
+            for (Map.Entry<Pattern, String> entry : DiscordSRV.getPlugin().getDiscordRegexes().entrySet()) {
+                chatFormat = entry.getKey().matcher(chatFormat).replaceAll(entry.getValue());
+                nameFormat = entry.getKey().matcher(nameFormat).replaceAll(entry.getValue());
+            }
 
-                    nameFormat = DiscordUtil.strip(nameFormat);
-                    dynmapHook.broadcastMessageToDynmap(nameFormat, chatFormat);
+            nameFormat = DiscordUtil.strip(nameFormat);
+            dynmapHook.broadcastMessageToDynmap(nameFormat, chatFormat);
         });
 
         DiscordSRV.getPlugin().broadcastMessageToMinecraftServer(
@@ -242,6 +258,7 @@ public class DiscordChatListener extends ListenerAdapter {
             DiscordSRV.info(LangUtil.InternalMessage.CHAT + ": " + DiscordUtil.strip(postEvent.getProcessedMessage().replace("»", ">")));
         }
     }
+
 
     //TODO: ここ
     private String replacePlaceholders(String input, GuildMessageReceivedEvent event, List<Role> selectedRoles, String message) {
