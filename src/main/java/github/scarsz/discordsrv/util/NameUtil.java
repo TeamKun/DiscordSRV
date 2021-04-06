@@ -25,6 +25,8 @@ package github.scarsz.discordsrv.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import github.scarsz.discordsrv.DiscordSRV;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +87,14 @@ public class NameUtil
     public static String fetch(UUID id)
     {
         String name;
+
+        Player player;
+
+        if ((player = Bukkit.getPlayer(id)) != null)
+        {
+            insert(id, player.getName());
+            return player.getName();
+        }
 
         try
         {
